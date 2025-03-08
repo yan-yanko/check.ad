@@ -1,0 +1,66 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  accounts      Account[]
+  campaigns     Campaign[]
+}
+
+model Account {
+  id            String    @id @default(cuid())
+  userId        String
+  type          String
+  provider      String
+  providerAccountId String
+  refresh_token String?
+  access_token  String?
+  expires_at    Int?
+  token_type    String?
+  scope         String?
+  id_token      String?
+  session_state String?
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@unique([provider, providerAccountId])
+}
+
+model Campaign {
+  id            String    @id @default(cuid())
+  name          String
+  platform      String
+  status        String
+  budget        Float
+  spend         Float
+  conversions   Int       @default(0)
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  issues        Issue[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Issue {
+  id            String    @id @default(cuid())
+  type          String
+  description   String
+  severity      String
+  status        String    @default("open")
+  suggestedFix  String?
+  campaignId    String
+  campaign      Campaign  @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+} 
