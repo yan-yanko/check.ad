@@ -16,6 +16,7 @@
     "bull": "^4.16.5",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "framer-motion": "^12.4.10",
     "googleapis": "^146.0.0",
     "lucide-react": "^0.479.0",
     "next-auth": "^4.24.11",

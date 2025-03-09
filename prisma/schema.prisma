@@ -63,4 +63,66 @@ model Issue {
   campaign      Campaign  @relation(fields: [campaignId], references: [id], onDelete: Cascade)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+}
+
+model Client {
+  id          String    @id @default(cuid())
+  name        String
+  logo        String?   // URL ללוגו של הלקוח
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  accounts    AdAccount[]
+  issues      ClientIssue[]
+  userId      String    // המשתמש שיצר את הלקוח
+  user        User      @relation(fields: [userId], references: [id])
+}
+
+model AdAccount {
+  id          String    @id @default(cuid())
+  name        String
+  platform    String    // google, facebook, linkedin, etc.
+  accountId   String    // מזהה החשבון במערכת המקורית
+  clientId    String
+  client      Client    @relation(fields: [clientId], references: [id])
+  campaigns   Campaign[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Campaign {
+  id          String    @id
+  name        String
+  status      String
+  budget      Float
+  spend       Float     @default(0)
+  conversions Int       @default(0)
+  accountId   String
+  account     AdAccount @relation(fields: [accountId], references: [id])
+  issues      CampaignIssue[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model ClientIssue {
+  id          String    @id @default(cuid())
+  clientId    String
+  client      Client    @relation(fields: [clientId], references: [id])
+  type        String    // duplicate, error, warning
+  severity    String    // high, medium, low
+  description String
+  status      String    // open, resolved
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model CampaignIssue {
+  id          String    @id @default(cuid())
+  campaignId  String
+  campaign    Campaign  @relation(fields: [campaignId], references: [id])
+  type        String
+  severity    String    // high, medium, low
+  description String
+  status      String    // open, resolved
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 } 
